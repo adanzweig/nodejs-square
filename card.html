@@ -1,0 +1,47 @@
+<!-- Square payment library script inclusion -->
+<script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+
+<script>
+    // Event listener for when the DOM content is fully loaded
+    document.addEventListener('DOMContentLoaded',function(){
+        // Initialize Square payments with sandbox credentials
+        const payments = Square.payments('sandbox-sq0idb-izWzoXrKgc9pTNpk3th25Q','LVXBJ45V86T3D');
+        let card;
+
+        // Function to initialize the card payment method
+        async function intializeCard(payments){
+            // Creating a card payment object
+            card = await payments.card();
+            // Attaching the card to the card container element
+            await card.attach('#card-container');
+        }
+
+        // Calling the initializeCard function and logging the card object
+        intializeCard(payments).then(card=>{
+            console.log(card);
+        });
+
+        // Event listener for the card button click
+        document.getElementById('card-button').addEventListener('click',async function(){
+            try{
+                // Attempt to tokenize the card information
+                const tokenResult = await card.tokenize();
+                if(tokenResult.status == 'OK'){
+                    // Log the token if tokenization is successful
+                    console.log(tokenResult.token);
+                }else{
+                    // Log an error message if tokenization fails
+                    console.error('failed to tokenize');
+                }
+            }catch(error){
+                // Catch and log any errors during the process
+                console.error('error',error);
+            }
+        })
+    })
+</script>
+
+<!-- Card container where the card UI will be rendered -->
+<div id="card-container"></div>
+<!-- Button to trigger the card tokenization process -->
+<button id="card-button" type="button">Save</button>
